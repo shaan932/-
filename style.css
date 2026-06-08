@@ -1,0 +1,797 @@
+/* ==========================================================================
+   MOBILE-FIRST CINEMATIC DESIGN ARCHITECTURE
+   ========================================================================== */
+:root {
+    --bg-void: #090314;
+    --gradient-girly-base: linear-gradient(135deg, #ffd3e8 0%, #d1b3ff 50%, #b280ff 100%);
+    --pink-blossom: #ff6ca1;
+    --lavender-dream: #a370f7;
+    --purple-deep: #411d7c;
+    --glass-body: rgba(255, 255, 255, 0.05);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --neon-glow: rgba(255, 108, 161, 0.25);
+    --text-pure: #ffffff;
+    --text-soft: #f1e5ff;
+    --text-muted: #c3afdb;
+    --font-fancy: 'Playfair Display', serif;
+    --font-cozy: 'Comfortaa', cursive;
+    --font-script: 'Caveat', cursive;
+}
+
+/* Base Viewport Normalization */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+body, html {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--bg-void);
+    color: var(--text-pure);
+    font-family: var(--font-cozy);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Immersive Performance Particles Layer */
+#ambient-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   SECTION 1: ANIMATED WELCOME SCREEN (INTENT CAPTURE)
+   ========================================================================== */
+.welcome-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #1b0c2e 0%, var(--bg-void) 100%);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.welcome-card-content {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(25, 12, 43, 0.65);
+    border: 1px solid rgba(255, 108, 161, 0.2);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    padding: 40px 24px;
+    border-radius: 32px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(163, 112, 247, 0.1);
+}
+
+.welcome-message {
+    font-family: var(--font-fancy);
+    font-size: 1.55rem;
+    line-height: 1.6;
+    color: var(--text-pure);
+    margin-bottom: 40px;
+    min-height: 100px; /* Prevents layout shifting during typewriter processing */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.welcome-message i {
+    color: var(--pink-blossom);
+}
+
+.magical-deco-sparkle {
+    position: absolute;
+    font-size: 3rem;
+    color: var(--pink-blossom);
+    opacity: 0.3;
+    animation: floating-swivel 4s infinite ease-in-out;
+}
+
+.premium-interactive-btn {
+    width: 100%;
+    font-family: var(--font-cozy);
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 16px 28px;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--pink-blossom), var(--lavender-dream));
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255, 108, 161, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-interactive-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transition: 0.5s;
+}
+
+.premium-interactive-btn:active::before {
+    left: 100%;
+}
+
+/* Locking Content State Prior to Interaction */
+.app-locked-state {
+    opacity: 0;
+    pointer-events: none;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   GLOBAL INTERACTIVE FLOATING MEDIA CONTROLS
+   ========================================================================== */
+.audio-widget-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(14, 5, 29, 0.8);
+    border: 1px solid var(--glass-edge);
+    padding: 8px 14px;
+    border-radius: 40px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    transition: all 0.5s ease;
+}
+
+.hidden-widget {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+}
+
+.music-btn {
+    background: transparent;
+    border: none;
+    color: var(--pink-blossom);
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fa-spin-slow {
+    animation: spin-clockwise 4s linear infinite;
+}
+
+.audio-slider-tray {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+#volume-slider {
+    width: 60px;
+    height: 4px;
+    accent-color: var(--pink-blossom);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   SECTION 2: MOBILE HERO CONFIGURATION
+   ========================================================================== */
+main {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+}
+
+.mobile-viewport-section {
+    width: 100%;
+    height: 100vh;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-flex-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-ambient-orb {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,108,161,0.22) 0%, transparent 70%);
+    filter: blur(30px);
+    pointer-events: none;
+}
+
+/* Mobile Optimized Polaroid Wrapper */
+.hero-polaroid-frame {
+    background: #ffffff;
+    padding: 14px 14px 24px 14px;
+    border-radius: 4px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.55), 0 2px 10px rgba(255,255,255,0.05);
+    width: 100%;
+    max-width: 310px;
+    transform: rotate(-3deg);
+}
+
+.polaroid-image-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #110822;
+}
+
+.polaroid-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.polaroid-tag {
+    text-align: center;
+    padding-top: 18px;
+}
+
+.hero-main-name {
+    font-family: var(--font-script);
+    font-size: 2.5rem;
+    color: #1a082e;
+    line-height: 1;
+}
+
+.hero-main-sub {
+    font-family: var(--font-cozy);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.text-gradient-girly {
+    background: linear-gradient(to right, #e01b6d, #821be0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.scroll-prompt-container {
+    position: absolute;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.6;
+}
+
+.prompt-text {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+}
+
+.bouncing-arrow {
+    font-size: 0.9rem;
+    color: var(--pink-blossom);
+    animation: bounce-vertical 1.8s infinite;
+}
+
+/* ==========================================================================
+   SECTION UI CORE: TITLES & CARD CONVENTIONS
+   ========================================================================== */
+.content-wrapper-section {
+    width: 100%;
+    padding: 60px 20px;
+    position: relative;
+}
+
+.section-title-block {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.decorative-pill-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--pink-blossom);
+    background: rgba(255, 108, 161, 0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 108, 161, 0.2);
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.section-title-text {
+    font-family: var(--font-fancy);
+    font-size: 1.8rem;
+    color: var(--text-pure);
+    font-weight: 600;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Glassmorphic Structural Defs */
+.special-cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.special-feature-card {
+    background: var(--glass-body);
+    border: 1px solid var(--glass-edge);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.feature-icon-box {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+}
+
+.pink-box { background: rgba(255, 108, 161, 0.15); color: var(--pink-blossom); }
+.purple-box { background: rgba(163, 112, 247, 0.15); color: var(--lavender-dream); }
+.lavender-box { background: rgba(209, 179, 255, 0.15); color: #c49eff; }
+
+.feature-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+}
+
+.feature-desc {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   SECTION 4: STORY TIMELINE DESIGN
+   ========================================================================== */
+.timeline-bg-gradient {
+    background: linear-gradient(180deg, transparent 0%, #160c29 50%, transparent 100%);
+}
+
+.vertical-timeline-container {
+    position: relative;
+    padding-left: 24px;
+}
+
+.timeline-thread-line {
+    position: absolute;
+    left: 6px;
+    top: 5px;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--pink-blossom), var(--lavender-dream), var(--pink-blossom));
+    opacity: 0.4;
+}
+
+.timeline-node {
+    position: relative;
+    margin-bottom: 35px;
+}
+
+.timeline-node:last-child {
+    margin-bottom: 0;
+}
+
+.node-marker-dot {
+    position: absolute;
+    left: -23px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    background: var(--pink-blossom);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--pink-blossom);
+}
+
+.node-bubble-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.node-time-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--pink-blossom);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.node-heading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-pure);
+    margin-bottom: 8px;
+}
+
+.node-body {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   SECTION 7: FRIENDSHIP TIMING STATION
+   ========================================================================== */
+.counter-banner-wrapper {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.counter-glass-container {
+    background: linear-gradient(135deg, rgba(255, 108, 161, 0.08), rgba(163, 112, 247, 0.08));
+    border: 1px solid rgba(255,108,161,0.15);
+    border-radius: 28px;
+    padding: 24px 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    text-align: center;
+}
+
+.counter-header-tag {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.counter-header-tag i {
+    color: var(--pink-blossom);
+}
+
+.live-counter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.counter-unit-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 12px 4px;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+
+.counter-number {
+    font-family: var(--font-fancy);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-pure);
+    display: block;
+}
+
+.counter-label {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+    display: block;
+}
+
+/* ==========================================================================
+   SECTION 5: PREMIUM POLAROID PORTFOLIO (MOBILE MASONRY)
+   ========================================================================== */
+.gallery-subheading-label {
+    font-family: var(--font-fancy);
+    font-size: 1.1rem;
+    color: var(--text-soft);
+    margin-bottom: 24px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 3px solid var(--pink-blossom);
+    padding-left: 10px;
+}
+
+.distinct-margin-top {
+    margin-top: 50px;
+}
+
+.premium-masonry-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.polaroid-wrapper-card {
+    background: #ffffff;
+    padding: 8px 8px 16px 8px;
+    border-radius: 2px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+/* Alternating visual tilts across mobile screen layout */
+.premium-masonry-gallery .polaroid-wrapper-card:nth-child(even) {
+    transform: rotate(2deg) translateY(10px);
+}
+
+.premium-masonry-gallery .polaroid-wrapper-card:nth-child(odd) {
+    transform: rotate(-2deg);
+}
+
+.polaroid-inner {
+    width: 100%;
+}
+
+.polaroid-inner img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.polaroid-caption {
+    font-family: var(--font-script);
+    color: #1c0930;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-align: center;
+    padding-top: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Lightbox Immersive Overlay Module */
+.lightbox-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(7, 2, 17, 0.95);
+    z-index: 100000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: opacity 0.4s ease;
+}
+
+.hidden-lightbox {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#lightbox-enlarged-img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.lightbox-close-trigger {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 2.5rem;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   SECTION 6: EMOTIONAL SACRED MEMORY WALL
+   ========================================================================== */
+.wall-ambient-setup {
+    background: radial-gradient(circle at bottom, rgba(74, 29, 124, 0.25) 0%, transparent 80%);
+}
+
+.memory-wall-longform-box {
+    background: rgba(25, 12, 43, 0.4);
+    border: 1px solid var(--glass-edge);
+    border-radius: 28px;
+    padding: 30px 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.wall-paragraph {
+    font-family: var(--font-fancy);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text-soft);
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.wall-paragraph:last-child {
+    margin-bottom: 0;
+}
+
+.wall-paragraph strong {
+    color: var(--pink-blossom);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   SECTION 8: REASONS I APPRECIATE YOU (HORIZONTAL SWIPE DECK)
+   ========================================================================== */
+.appreciation-grid-zone {
+    padding-right: 0px !important; /* Permits cards to pass seamlessly off frame */
+}
+
+.horizontal-scrolling-appreciations-deck {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    scrollbar-width: none; /* Disables scroll track visual on Firefox */
+}
+
+.horizontal-scrolling-appreciations-deck::-webkit-scrollbar {
+    display: none; /* Disables scroll track visual on Chrome/Safari */
+}
+
+.appreciation-mini-card {
+    flex: 0 0 240px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid var(--glass-edge);
+    border-radius: 24px;
+    padding: 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-numeric-badge {
+    font-family: var(--font-fancy);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: rgba(255, 108, 161, 0.25);
+    line-height: 1;
+    margin-bottom: 14px;
+}
+
+.appreciation-text {
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--text-soft);
+}
+
+/* ==========================================================================
+   SECTION 9 & 10: GRAND FINALE VIP
+   ========================================================================== */
+.final-surprise-viewport {
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.finale-premium-glass-envelope {
+    background: rgba(14, 5, 27, 0.75);
+    border: 1px solid rgba(255, 108, 161, 0.3);
+    border-radius: 36px;
+    padding: 45px 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255,255,255,0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+}
+
+.crown-emblem {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    animation: pulse-grow 2s infinite ease-in-out;
+}
+
+.heartfelt-letter-container .finale-para {
+    font-family: var(--font-fancy);
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: var(--text-soft);
+    margin-bottom: 24px;
+}
+
+.finale-signoff-block {
+    margin-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 30px;
+}
+
+.grand-wishes-text {
+    font-family: var(--font-cozy);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.4;
+}
+
+.grand-subwishes {
+    font-family: var(--font-fancy);
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--pink-blossom);
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.signature-line {
+    font-family: var(--font-script);
+    font-size: 1.8rem;
+    color: var(--lavender-dream);
+    margin-top: 25px;
+}
+
+/* ==========================================================================
+   DYNAMIC HARDWARE ANIMATIONS SYSTEM
+   ========================================================================== */
+@keyframes spin-clockwise {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes bounce-vertical {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+}
+
+@keyframes floating-swivel {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(15deg); }
+}
+
+@keyframes pulse-grow {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
